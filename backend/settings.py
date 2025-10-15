@@ -1,4 +1,6 @@
 import os
+import dj_database_url
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()  # Load environment variables from .env file
@@ -30,9 +32,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-rhfqwmp84v_(h*=!ca=x%)=sjxxm6n3b*^i@o64e5b814!_!t8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+DEBUG = False
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # must be very first
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -101,6 +103,7 @@ DATABASES = {
         'PASSWORD': 'heman',
         'HOST': 'localhost',
         'PORT': '5432',
+        'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
     }
 }
 
