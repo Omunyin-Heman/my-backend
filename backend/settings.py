@@ -2,6 +2,7 @@ import os
 import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
+from decouple import config
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -32,9 +33,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-rhfqwmp84v_(h*=!ca=x%)=sjxxm6n3b*^i@o64e5b814!_!t8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 INSTALLED_APPS = [
@@ -95,18 +95,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'my_backend',
-        'USER': 'postgres',
-        'PASSWORD': 'heman',
-        'HOST': 'localhost',
-        'PORT': '5432',
-        'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
-    }
-}
 
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL')
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
