@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from decouple import config
 
 load_dotenv()  # Load environment variables from .env file
+MPESA_CALLBACK_URL = os.environ.get('MPESA_CALLBACK_URL')
+PAYPAL_CALLBACK_URL = os.environ.get('PAYPAL_CALLBACK_URL')
 
 
 
