@@ -16,9 +16,7 @@ def home(request):
 urlpatterns = [
     path('', home),
     path('admin/', admin.site.urls),
-
-    # Specific APIs first
-    path('api/payments/', include('backend.payments.urls')),
+    path('api/payments/', include('payments.urls')),  # ✅ include payments app
     path('api/partners/', include('partnerApplications.urls')),
     path('api/volunteers/', include('volunteers.urls')),
     path('api/contacts/', include('contacts.urls')),
