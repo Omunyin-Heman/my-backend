@@ -35,7 +35,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-rhfqwmp84v_(h*=!ca=x%)=sjxxm6n3b*^i@o64e5b814!_!t8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = os.environ.get('DEBUG', 'False') == 'False'
 ALLOWED_HOSTS = ['*']
 
 # Application definition
@@ -72,6 +72,13 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://epicare-frontend.vercel.app",
+]
+
+CORS_ALLOW_CREDENTIALS = True  # ✅ allow cookies/auth headers if any
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://epicare-frontend.vercel.app",  # ✅ required for POST/PUT/DELETE requests
 ]
 
 ROOT_URLCONF = 'backend.urls'
