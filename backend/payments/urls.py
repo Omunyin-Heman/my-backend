@@ -1,12 +1,8 @@
-
 from django.urls import path
-from . import views
+from .views import MpesaStkPushView, MpesaCallbackView, PaypalWebhookView
 
 urlpatterns = [
-    path('', views.payment_home, name='payment_home'),
-    path('mpesa/', views.mpesa_stkpush, name='mpesa_stkpush'),
-    path('paypal/', views.paypal_payment, name='paypal_payment'),
-    path('mpesa/callback/', views.mpesa_callback, name='mpesa_callback'),
+    path('mpesa/stkpush/', MpesaStkPushView.as_view(), name='mpesa_stkpush'),
+    path('mpesa/callback/', MpesaCallbackView.as_view(), name='mpesa_callback'),
+    path('paypal/webhook/', PaypalWebhookView.as_view(), name='paypal_webhook'),
 ]
-
-

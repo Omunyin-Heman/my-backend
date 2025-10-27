@@ -6,13 +6,10 @@ from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from .serializers import (
-    MpesaStkPushRequestSerializer,
-    MpesaPaymentSerializer,
-    PaypalLogSerializer,
-)
+from .serializers import MpesaTransactionSerializer, PaypalLogSerializer
 from .models import MpesaPayment, PaypalPayment
 from django.utils import timezone
+
 
 # ----------- Helpers: M-Pesa endpoints & tokens -----------
 def get_mpesa_urls():

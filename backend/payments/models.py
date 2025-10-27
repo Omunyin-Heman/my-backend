@@ -15,9 +15,10 @@ class Payment(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=10, default='USD')  # added for PayPal
     method = models.CharField(max_length=20, choices=PAYMENT_METHODS)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Processing')
-    transaction_id = models.CharField(max_length=50, blank=True, null=True)
+    transaction_id = models.CharField(max_length=100, blank=True, null=True)  # make bigger for PayPal IDs
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
