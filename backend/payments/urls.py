@@ -1,9 +1,9 @@
 from django.urls import path
-from .views import MpesaStkPushView, MpesaCallbackView, PaypalWebhookView, create_admin
+from .views import mpesa_stkpush, mpesa_callback, paypal_payment, create_admin
 
 urlpatterns = [
-    path('mpesa/stkpush/', MpesaStkPushView.as_view(), name='mpesa_stkpush'),
-    path('mpesa/callback/', MpesaCallbackView.as_view(), name='mpesa_callback'),
-    path('paypal/webhook/', PaypalWebhookView.as_view(), name='paypal_webhook'),
+    path('mpesa/stkpush/', mpesa_stkpush, name='mpesa_stkpush'),
+    path('mpesa/callback/', mpesa_callback, name='mpesa_callback'),
+    path('paypal/', paypal_payment, name='paypal_payment'),
     path('create-admin/', create_admin, name='create_admin'),
 ]

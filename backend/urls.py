@@ -21,6 +21,7 @@ urlpatterns = [
     # Payments app
     path('api/payments/', include('payments.urls')),
 
+
     # Other apps
     path('api/partners/', include('partnerApplications.urls')),
     path('api/volunteers/', include('volunteers.urls')),
