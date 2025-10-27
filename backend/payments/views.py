@@ -11,6 +11,9 @@ import base64
 from .serializers import PaymentSerializer, PaypalPaymentSerializer
 from .models import Payment
 
+from django.contrib.auth import get_user_model
+
+
 # ---------------------------------------------------
 # 🟢 PAYPAL CONFIGURATION
 # ---------------------------------------------------
@@ -152,3 +155,18 @@ def paypal_payment(request):
             return JsonResponse({"error": payment.error}, status=400)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+
+
+# super user
+def create_admin(request):
+    User = get_user_model()
+    username = "administrator"
+    password = "admin1234"  # You can change this
+    email = "admin@example.com"
+
+    if not User.objects.filter(username=username).exists():
+        User.objects.create_superuser(username=username, password=password, email=email)
+        return JsonResponse({"status": "created"})
+    else:
+        return JsonResponse({"status": "exists"})
