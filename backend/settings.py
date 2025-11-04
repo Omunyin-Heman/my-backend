@@ -1,32 +1,22 @@
 import os
-from pathlib import Path
-from dotenv import load_dotenv
 from decouple import config
 import dj_database_url
+from pathlib import Path
 
 # --------------------------------------------------
-# Load environment variables
-# --------------------------------------------------
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-# --------------------------------------------------
-# Base directory
+# Base Directory
 # --------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --------------------------------------------------
-
-
-# 🔐 Security & Environment
-# ----------------------------------------
-SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
-ALLOWED_HOSTS = [h for h in os.getenv("ALLOWED_HOSTS", "").split(",") if h]
-
+# Security
+# --------------------------------------------------
+SECRET_KEY = config('SECRET_KEY', default='dev-secret-key')
+DEBUG = config('DEBUG', default=False, cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
 
 # --------------------------------------------------
-# Installed apps
+# Installed Apps
 # --------------------------------------------------
 INSTALLED_APPS = [
     # Django default
@@ -38,8 +28,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Third-party
-    'corsheaders',
     'rest_framework',
+    'corsheaders',
 
     # Local apps
     'partnerApplications',
@@ -53,8 +43,8 @@ INSTALLED_APPS = [
 # --------------------------------------------------
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Must be first
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # For static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -64,35 +54,22 @@ MIDDLEWARE = [
 ]
 
 # --------------------------------------------------
-# CORS & CSRF
-# --------------------------------------------------
-CORS_ALLOW_ALL_ORIGINS = False
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://epicare-frontend.vercel.app",
-    "https://my-backend-1.onrender.com",
-]
-CSRF_TRUSTED_ORIGINS = [
-    "https://epicare-frontend.vercel.app",
-    "https://my-backend-1.onrender.com",
-]
-
-CORS_ALLOW_CREDENTIALS = True
-
-# --------------------------------------------------
 # URLs & WSGI
 # --------------------------------------------------
 ROOT_URLCONF = 'backend.urls'
+WSGI_APPLICATION = 'backend.wsgi.application'
 
+# --------------------------------------------------
+# Templates
+# --------------------------------------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -101,14 +78,13 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
-
 # --------------------------------------------------
 # Database
 # --------------------------------------------------
 DATABASES = {
-    'default': dj_database_url.parse(DATABASE_URL)
+    'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
+
 # --------------------------------------------------
 # Password Validation
 # --------------------------------------------------
@@ -120,6 +96,32 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # --------------------------------------------------
+# Static & Media
+# --------------------------------------------------
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# --------------------------------------------------
+# CORS
+# --------------------------------------------------
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://epicare-frontend.vercel.app",
+    "https://my-backend-1.onrender.com",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://epicare-frontend.vercel.app",
+    "https://my-backend-1.onrender.com",
+]
+CORS_ALLOW_CREDENTIALS = True
+
+# --------------------------------------------------
 # Internationalization
 # --------------------------------------------------
 LANGUAGE_CODE = 'en-us'
@@ -128,49 +130,37 @@ USE_I18N = True
 USE_TZ = True
 
 # --------------------------------------------------
-# Static & Media
-# --------------------------------------------------
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# --------------------------------------------------
 # Default primary key field
 # --------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # --------------------------------------------------
-# PayPal
+# PayPal Configuration
 # --------------------------------------------------
-PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
-PAYPAL_SECRET = os.getenv('PAYPAL_SECRET')
-PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')
-
-PAYPAL_CALLBACK_URL = os.getenv(
+PAYPAL_CLIENT_ID = config('PAYPAL_CLIENT_ID', default='')
+PAYPAL_SECRET = config('PAYPAL_SECRET', default='')
+PAYPAL_MODE = config('PAYPAL_MODE', default='sandbox')
+PAYPAL_CALLBACK_URL = config(
     'PAYPAL_CALLBACK_URL',
-    'https://my-backend-1-8oq8.onrender.com/api/payments/paypal/'
+    default='https://my-backend-1-8oq8.onrender.com/api/payments/paypal/'
 )
 
 # --------------------------------------------------
-# M-Pesa
+# M-Pesa Configuration
 # --------------------------------------------------
-MPESA_CONSUMER_KEY = os.getenv('MPESA_CONSUMER_KEY')
-MPESA_CONSUMER_SECRET = os.getenv('MPESA_CONSUMER_SECRET')
-MPESA_SHORTCODE = os.getenv('MPESA_SHORTCODE')
-MPESA_PASSKEY = os.getenv('MPESA_PASSKEY')
-MPESA_BASE_URL = os.getenv('MPESA_BASE_URL')
-
-MPESA_CALLBACK_URL = os.getenv(
+MPESA_CONSUMER_KEY = config('MPESA_CONSUMER_KEY', default='')
+MPESA_CONSUMER_SECRET = config('MPESA_CONSUMER_SECRET', default='')
+MPESA_SHORTCODE = config('MPESA_SHORTCODE', default='')
+MPESA_PASSKEY = config('MPESA_PASSKEY', default='')
+MPESA_BASE_URL = config('MPESA_BASE_URL', default='')
+MPESA_CALLBACK_URL = config(
     'MPESA_CALLBACK_URL',
-    'https://my-backend-1-8oq8.onrender.com/api/payments/mpesa/callback/'
+    default='https://my-backend-1-8oq8.onrender.com/api/payments/mpesa/callback/'
 )
 
-# 🛡️ Security Headers (Render Production)
-# ----------------------------------------
+# --------------------------------------------------
+# Security Headers (Render Production)
+# --------------------------------------------------
 if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -180,7 +170,10 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
 
-    REST_FRAMEWORK = {
+# --------------------------------------------------
+# REST Framework
+# --------------------------------------------------
+REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
