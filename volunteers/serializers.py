@@ -4,5 +4,4 @@ from .models import Volunteer
 class VolunteerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Volunteer
-        fields = '__all__'
-
+        fields = '__all__'  # Include all fields, or list them explicitly if needed

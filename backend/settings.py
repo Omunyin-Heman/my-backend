@@ -8,6 +8,7 @@ import dj_database_url
 # Load environment variables
 # --------------------------------------------------
 load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # --------------------------------------------------
 # Base directory
@@ -15,16 +16,14 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --------------------------------------------------
-# Security & Debug
-# --------------------------------------------------
-SECRET_KEY = config(
-    'SECRET_KEY',
-    default='django-insecure-rhfqwmp84v_(h*=!ca=x%)=sjxxm6n3b*^i@o64e5b814!_!t8'
-)
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-# Restrict allowed hosts
-ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
+
+# 🔐 Security & Environment
+# ----------------------------------------
+SECRET_KEY = os.getenv("SECRET_KEY")
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+ALLOWED_HOSTS = [h for h in os.getenv("ALLOWED_HOSTS", "").split(",") if h]
+
 
 # --------------------------------------------------
 # Installed apps
@@ -68,18 +67,16 @@ MIDDLEWARE = [
 # CORS & CSRF
 # --------------------------------------------------
 CORS_ALLOW_ALL_ORIGINS = False
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
     "https://epicare-frontend.vercel.app",
-    "https://my-backend-1-8oq8.onrender.com",
+    "https://my-backend-1.onrender.com",
 ]
-
 CSRF_TRUSTED_ORIGINS = [
     "https://epicare-frontend.vercel.app",
-    "https://my-backend-1-8oq8.onrender.com",
+    "https://my-backend-1.onrender.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -110,11 +107,8 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # --------------------------------------------------
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL')
-    )
+    'default': dj_database_url.parse(DATABASE_URL)
 }
-
 # --------------------------------------------------
 # Password Validation
 # --------------------------------------------------
@@ -174,3 +168,23 @@ MPESA_CALLBACK_URL = os.getenv(
     'MPESA_CALLBACK_URL',
     'https://my-backend-1-8oq8.onrender.com/api/payments/mpesa/callback/'
 )
+
+# 🛡️ Security Headers (Render Production)
+# ----------------------------------------
+if not DEBUG:
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+    REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+}

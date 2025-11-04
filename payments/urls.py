@@ -1,16 +1,10 @@
 from django.urls import path
-from .views import MpesaStkPushView, MpesaCallbackView, PaypalWebhookVerifyView
-
-from .views import (
-    MpesaStkPushView,
-    MpesaCallbackView,
-    PaypalWebhookVerifyView,
-    PaypalLogView,
-)
+from . import views
 
 urlpatterns = [
-    path('mpesa/stkpush/', MpesaStkPushView.as_view(), name='mpesa-stkpush'),
-    path('mpesa/callback/', MpesaCallbackView.as_view(), name='mpesa-callback'),
-    path('paypal/webhook/', PaypalWebhookVerifyView.as_view(), name='paypal-webhook'),
+    path('', views.payments_home, name='payments-home'),
+    path('mpesa/stkpush/', views.MpesaStkPushView.as_view(), name='mpesa-stkpush'),
+    path('mpesa/callback/', views.MpesaCallbackView.as_view(), name='mpesa-callback'),
+    path('paypal/webhook/', views.PaypalWebhookVerifyView.as_view(), name='paypal-webhook'),
+    path('paypal/log/', views.PaypalLogView.as_view(), name='paypal-log'),
 ]
-
